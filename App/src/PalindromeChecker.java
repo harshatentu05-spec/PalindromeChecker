@@ -1,32 +1,38 @@
+import java.util.Scanner;
+
 public class PalindromeChecker {
 
-    // Recursive method
+    // UC9: Recursive palindrome check
     public static boolean isPalindrome(String str, int start, int end) {
+        if (start >= end) return true;                 // Base condition
+        if (str.charAt(start) != str.charAt(end)) return false; // Mismatch
+        return isPalindrome(str, start + 1, end - 1); // Recurse
+    }
 
-        // Base condition
-        if (start >= end) {
-            return true;
-        }
-
-        // If characters don't match
-        if (str.charAt(start) != str.charAt(end)) {
-            return false;
-        }
-
-        // Recursive call
-        return isPalindrome(str, start + 1, end - 1);
+    // UC10: Normalize string (ignore case & spaces)
+    public static String normalizeString(String input) {
+        return input.replaceAll("\\s+", "").toLowerCase();
     }
 
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
 
-        String input = "madam";
+        System.out.println("Enter a string to check palindrome:");
+        String input = scanner.nextLine();
 
-        boolean result = isPalindrome(input, 0, input.length() - 1);
+        // Normalize string for UC10
+        String normalized = normalizeString(input);
 
+        // Check palindrome using recursion (UC9)
+        boolean result = isPalindrome(normalized, 0, normalized.length() - 1);
+
+        // Output result
         if (result) {
-            System.out.println(input + " is a Palindrome");
+            System.out.println("\"" + input + "\" is a Palindrome");
         } else {
-            System.out.println(input + " is not a Palindrome");
+            System.out.println("\"" + input + "\" is NOT a Palindrome");
         }
+
+        scanner.close();
     }
 }
