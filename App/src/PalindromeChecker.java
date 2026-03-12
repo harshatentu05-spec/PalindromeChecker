@@ -1,21 +1,76 @@
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Scanner;
+import java.util.Stack;
+
 public class PalindromeChecker {
 
-    // Public method – entry point for checking palindrome
+    // Enum to choose strategy
+    enum Strategy {
+        STACK,
+        DEQUE
+    }
+
+    private Strategy strategy;
+
+    public PalindromeChecker(Strategy strategy) {
+        this.strategy = strategy;
+    }
+
     public boolean checkPalindrome(String input) {
-        if (input == null) return false; // null check
-        String normalized = normalizeString(input);   // UC10 logic
-        return isPalindromeRecursive(normalized, 0, normalized.length() - 1); // UC9 logic
+        if (input == null) return false;
+
+        // Normalize string: remove spaces, lowercase
+        String str = input.replaceAll("\\s+", "").toLowerCase();
+
+        // Apply chosen strategy
+        if (strategy == Strategy.STACK) {
+            return checkWithStack(str);
+        } else {
+            return checkWithDeque(str);
+        }
     }
 
-    // Private helper – normalize string (ignore spaces and case)
-    private String normalizeString(String input) {
-        return input.replaceAll("\\s+", "").toLowerCase();
+    // Stack-based palindrome check
+    private boolean checkWithStack(String str) {
+        Stack<Character> stack = new Stack<>();
+        for (char c : str.toCharArray()) {
+            stack.push(c);
+        }
+        for (char c : str.toCharArray()) {
+            if (c != stack.pop()) return false;
+        }
+        return true;
     }
 
-    // Private helper – recursive palindrome check
-    private boolean isPalindromeRecursive(String str, int start, int end) {
-        if (start >= end) return true;
-        if (str.charAt(start) != str.charAt(end)) return false;
-        return isPalindromeRecursive(str, start + 1, end - 1);
+    // Deque-based palindrome check
+    private boolean checkWithDeque(String str) {
+        Deque<Character> deque = new ArrayDeque<>();
+        for (char c : str.toCharArray()) {
+            deque.addLast(c);
+        }
+        while (deque.size() > 1) {
+            if (!deque.removeFirst().equals(deque.removeLast())) return false;
+        }
+        return true;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter a string to check palindrome:");
+        String input = scanner.nextLine();
+
+        System.out.println("Choose strategy: 1 = Stack, 2 = Deque");
+        int choice = scanner.nextInt();
+
+        Strategy strategy = (choice == 1) ? Strategy.STACK : Strategy.DEQUE;
+        PalindromeChecker checker = new PalindromeChecker(strategy);
+
+        boolean result = checker.checkPalindrome(input);
+
+        System.out.println("\"" + input + "\"" + (result ? " is a Palindrome" : " is NOT a Palindrome"));
+
+        scanner.close();
     }
 }
